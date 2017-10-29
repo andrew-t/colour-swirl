@@ -10,6 +10,10 @@ function setSize(e) {
 let lastFrame,
 	t;
 const rects = [];
+const spin = {
+	omega: Math.random() * 0.0001 + 0.00003,
+	phase: Math.random()
+};
 document.addEventListener('DOMContentLoaded', firstFrame);
 function firstFrame() {
 	lastFrame = Date.now();
@@ -19,11 +23,13 @@ function firstFrame() {
 		rects.push({
 			rect,
 			gradient: document.getElementById(`g${i}`),
-			endStop: document.getElementById(`s${i}`),
+			startStop: document.getElementById(`s${i}`),
+			endStop: document.getElementById(`e${i}`),
 			hue: {
 				omega: Math.random() * 0.0001 + 0.00003,
 				phase: Math.random()
-			}
+			},
+			spinOffset: Math.PI * 2 * i / 3
 		});
 	}
 	drawFrame(t = 0);
@@ -38,6 +44,7 @@ function frame() {
 }
 
 function drawFrame(t) {
+	// colour
 	const hues = rects.map(rect => rect.hue);
 	hues.forEach(v => {
 		v.value = t * v.omega + v.phase;
@@ -59,6 +66,17 @@ function drawFrame(t) {
 	rects.forEach(r => {
 		r.endStop.setAttribute('stop-color',
 			`rgb(${r.hue.rgb.join(', ')})`);
+	});
+
+	// spin
+	const theta = t * spin.omega + spin.phase;
+	rects.forEach(r => {
+		const x = Math.sin(theta + r.spinOffset) / 2,
+			y = Math.cos(theta + r.spinOffset) / 2;
+		r.gradient.setAttribute('x1', x + 0.5);
+		r.gradient.setAttribute('y1', y + 0.5);
+		r.gradient.setAttribute('x2', 0.5 - x);
+		r.gradient.setAttribute('y2', 0.5 - y);
 	});
 }
 
