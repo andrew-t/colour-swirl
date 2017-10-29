@@ -1,0 +1,13 @@
+.background {
+	transform-origin: 0 0;
+	position: absolute;
+	width: 100vw;
+	height: 100vw;
+	top: 0;
+	left: 0;
+}
+
+/* all but the first one */
+.background rect:nth-of-type(n + 2) {
+	mix-blend-mode: screen;
+}
